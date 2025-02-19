@@ -1,6 +1,6 @@
 import { getPaymentByID } from "../../shared/dal/payments/get-payments-by-id.mjs";
 
-export async function handler(event) {
+export async function handleGetPaymentByID(event) {
   try {
     // Extract paymentID from the path parameters
     const paymentID = event.pathParameters?.id;

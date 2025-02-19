@@ -1,6 +1,6 @@
 import { getAllPayments } from "../../shared/dal/payments/get-all-payments.mjs";
 
-export async function handler() {
+export async function handleGetAllPayments() {
   try {
     const payments = await getAllPayments();
 

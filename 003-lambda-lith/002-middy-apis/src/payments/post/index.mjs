@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { postPayment } from "../../shared/dal/payments/post-payment.mjs";
 
-export async function handler(event) {
+export async function handlePostPayment(event) {
   try {
     // Parse and validate the request body
     const requestBody = JSON.parse(event.body);
