@@ -21,6 +21,7 @@ export async function handler(event) {
       reference,
       amount,
       currencyCode,
+      issueDate: Math.floor(new Date().getTime() / 1000),
     };
 
     await putInvoice(invoice);
