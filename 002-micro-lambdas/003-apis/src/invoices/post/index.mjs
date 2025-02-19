@@ -17,7 +17,7 @@ export async function handler(event) {
       };
     }
     const invoice = {
-      id: randomUUID(),
+      invoiceID: randomUUID(),
       reference,
       amount,
       currencyCode,
@@ -27,7 +27,7 @@ export async function handler(event) {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ id: invoice.id }),
+      body: JSON.stringify({ id: invoice.invoiceID }),
     };
   } catch (error) {
     console.error("Error retrieving items:", error);
