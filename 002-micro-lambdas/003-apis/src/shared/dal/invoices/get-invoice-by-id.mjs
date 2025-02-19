@@ -8,7 +8,7 @@ const ddbDocClient = DynamoDBDocumentClient.from(client);
 export async function getInvoiceByID(invoiceID) {
   const params = {
     TableName: DYNAMO_DBS.INVOICES,
-    Key: { id: invoiceID },
+    Key: { invoiceID },
   };
   const command = new GetCommand(params);
   const result = await ddbDocClient.send(command);
