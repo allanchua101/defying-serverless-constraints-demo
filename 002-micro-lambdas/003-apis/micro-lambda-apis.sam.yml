@@ -114,6 +114,85 @@ Resources:
         External:
           - "@aws-sdk/lib-dynamodb"
 
+
+  GetAllPayments:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AppName}-${EnvCode}-payments-get-all"
+      CodeUri: src/payments/get-all
+      Handler: index.handler
+      Role:
+        Fn::ImportValue: !Sub "${AppName}-${EnvCode}-iam-role-arn"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /payments/
+            Method: GET
+            RestApiId: !Ref RestAPI
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Bundle: true         # Bundle all dependencies into a single file
+        Minify: true         # Minify the output for smaller package size
+        Sourcemap: true
+        EntryPoints: 
+          - index.mjs
+        External:
+          - "@aws-sdk/lib-dynamodb"
+
+  GetPaymentByID:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AppName}-${EnvCode}-payments-get-by-id"
+      CodeUri: src/payments/get-by-id
+      Handler: index.handler
+      Role:
+        Fn::ImportValue: !Sub "${AppName}-${EnvCode}-iam-role-arn"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /payments/{id}
+            Method: GET
+            RestApiId: !Ref RestAPI
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Bundle: true         # Bundle all dependencies into a single file
+        Minify: true         # Minify the output for smaller package size
+        Sourcemap: true
+        EntryPoints: 
+          - index.mjs
+        External:
+          - "@aws-sdk/lib-dynamodb"
+
+  PostPayment:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AppName}-${EnvCode}-payments-post"
+      CodeUri: src/payments/post
+      Handler: index.handler
+      Role:
+        Fn::ImportValue: !Sub "${AppName}-${EnvCode}-iam-role-arn"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /payments/
+            Method: POST
+            RestApiId: !Ref RestAPI
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Bundle: true         # Bundle all dependencies into a single file
+        Minify: true         # Minify the output for smaller package size
+        Sourcemap: true
+        EntryPoints: 
+          - index.mjs
+        External:
+          - "@aws-sdk/lib-dynamodb"
+
 Outputs:
   ApiGatewayUrl:
     Description: "URL of the API Gateway for the application"
