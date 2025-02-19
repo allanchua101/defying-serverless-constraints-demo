@@ -9,12 +9,12 @@ export const execute = middy().handler(
   httpRouterHandler([
     {
       method: "POST",
-      path: "/invoices/",
+      path: "/invoices/create",
       handler: middy().handler(handlePostInvoice),
     },
     {
       method: "GET",
-      path: "/invoices/",
+      path: "/invoices/list",
       handler: middy().handler(handleGetAllInvoices),
     },
     {

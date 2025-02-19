@@ -10,12 +10,12 @@ export const execute = middy().handler(
     // Payments
     {
       method: "POST",
-      path: "/payments/",
+      path: "/payments/create",
       handler: middy().handler(handlePostPayment),
     },
     {
       method: "GET",
-      path: "/payments/",
+      path: "/payments/list",
       handler: middy().handler(handleGetAllPayments),
     },
     {
