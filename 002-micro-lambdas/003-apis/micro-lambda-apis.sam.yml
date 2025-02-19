@@ -62,6 +62,32 @@ Resources:
         External:
           - "@aws-sdk/lib-dynamodb"
 
+  GetInvoiceByID:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AppName}-${EnvCode}-invoices-get-by-id"
+      CodeUri: src/invoices/get-by-id
+      Handler: index.handler
+      Role:
+        Fn::ImportValue: !Sub "${AppName}-${EnvCode}-iam-role-arn"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /invoices/{id}
+            Method: GET
+            RestApiId: !Ref RestAPI
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Bundle: true         # Bundle all dependencies into a single file
+        Minify: true         # Minify the output for smaller package size
+        Sourcemap: true
+        EntryPoints: 
+          - index.mjs
+        External:
+          - "@aws-sdk/lib-dynamodb"
+
 Outputs:
   ApiGatewayUrl:
     Description: "URL of the API Gateway for the application"
