@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Sample APIs built on top of Micro-lambda pattern.
+  
+Parameters:
+  AppName:
+    Description: "The application name"
+    Type: String
+    Default: sls-ledger
+
+  EnvCode:
+    Description: "The environment code (e.g. dev, uat, prd)"
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - uat
+      - prd
+
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: nodejs22.x
+    MemorySize: 512
+    Environment:
+      Variables:
+        ENV_PREFIX: !Sub "${AppName}-${EnvCode}"
+        ENV_CODE: !Ref EnvCode
+
+Resources:
+  # Define a dedicated REST API
+  RestAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub "${AppName}-${EnvCode}-api"
+      StageName: !Ref EnvCode
+
+  GetAllInvoiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AppName}-${EnvCode}-invoices-get-all"
+      CodeUri: src/invoices/get-all
+      Handler: index.handler
+      Role:
+        Fn::ImportValue: !Sub "${AppName}-${EnvCode}-iam-role-arn"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /invoices/
+            Method: GET
+            RestApiId: !Ref RestAPI
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Bundle: true         # Bundle all dependencies into a single file
+        Minify: true         # Minify the output for smaller package size
+        Sourcemap: true
+        EntryPoints: 
+          - index.mjs
+        External:
+          - "@aws-sdk/lib-dynamodb"
+
+Outputs:
+  ApiGatewayUrl:
+    Description: "URL of the API Gateway for the application"
+    Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/${EnvCode}"
+    Export:
+      Name: !Sub "${AppName}-${EnvCode}-api-url"

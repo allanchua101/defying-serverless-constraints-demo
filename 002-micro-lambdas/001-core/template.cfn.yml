@@ -85,6 +85,40 @@ Resources:
       # The bucket name includes the stack name and environment name for uniqueness.
       BucketName: !Sub "${AppName}-${EnvCode}-attachments-bucket"
 
+  AppIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AppName}-${EnvCode}-app-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: AccessAppResourcesPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # Permissions for DynamoDB tables
+              - Effect: Allow
+                Action: 
+                  - dynamodb:*
+                Resource:
+                  - !GetAtt InvoicesTable.Arn
+                  - !GetAtt InvoiceLineItemsTable.Arn
+                  - !GetAtt PaymentsTable.Arn
+                  - !GetAtt AttachmentsTable.Arn
+              # Permissions for the S3 bucket and its objects
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource:
+                  - !Sub "arn:aws:s3:::${AppName}-${EnvCode}-attachments-bucket"
+                  - !Sub "arn:aws:s3:::${AppName}-${EnvCode}-attachments-bucket/*"
 
 Outputs:
   InvoicesTableRef:
@@ -92,6 +126,12 @@ Outputs:
     Value: !Ref InvoicesTable
     Export:
       Name: !Sub "${AppName}-${EnvCode}-invoices"
+
+  AppIAMRole:
+    Description: "The ARN of the shared IAM role that grants access to all resources."
+    Value: !GetAtt AppIAMRole.Arn
+    Export:
+      Name: !Sub "${AppName}-${EnvCode}-iam-role-arn"
 
   InvoiceLineItemsTableRef:
     Description: "Reference to the Invoice Line Items DynamoDB Table (table name)."
