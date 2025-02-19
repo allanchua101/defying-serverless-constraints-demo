@@ -24,10 +24,10 @@ Resources:
       # Optionally include the environment name in the table name.
       TableName: !Sub "${AppName}-${EnvCode}-invoices"
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: invoiceID
           AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: invoiceID
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       Tags:
@@ -39,11 +39,20 @@ Resources:
     Properties:
       TableName: !Sub "${AppName}-${EnvCode}-invoice-line-items"
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: invoiceLineItemID
+          AttributeType: S
+        - AttributeName: invoiceID
           AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: invoiceLineItemID
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: InvoiceIndex
+          KeySchema:
+            - AttributeName: invoiceID
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
       Tags:
         - Key: Environment
@@ -54,10 +63,10 @@ Resources:
     Properties:
       TableName: !Sub "${AppName}-${EnvCode}-payments"
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: paymentID
           AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: paymentID
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
       Tags:
@@ -69,11 +78,20 @@ Resources:
     Properties:
       TableName: !Sub "${AppName}-${EnvCode}-attachments"
       AttributeDefinitions:
-        - AttributeName: id
+        - AttributeName: attachmentID
+          AttributeType: S
+        - AttributeName: invoiceID
           AttributeType: S
       KeySchema:
-        - AttributeName: id
+        - AttributeName: attachmentID
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: InvoiceIndex
+          KeySchema:
+            - AttributeName: invoiceID
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
       Tags:
         - Key: Environment
